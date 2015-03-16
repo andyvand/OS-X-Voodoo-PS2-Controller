@@ -51,9 +51,8 @@ int main (int argc, char * const argv[]) {
 		printf ("Couldn't allocate space\n");
 		return 1;
 	}
-	
-	if (!(plist=(CFDictionaryRef)CFPropertyListCreateFromXMLData (kCFAllocatorDefault, dat, kCFPropertyListImmutable, NULL)))
-	{
+    if (!(plist=(CFPropertyListRef)CFPropertyListCreateWithData(kCFAllocatorDefault, dat, kCFPropertyListImmutable, NULL, NULL)))
+    {
 		printf ("Error parsing plist\n");
 		return 1;
 	}

@@ -292,12 +292,13 @@ bool ApplePS2Controller::init(OSDictionary* dict)
             sizeof(PS2Request), sizeof(TPS2Request<0>));
       return false;
   }
-  if (offsetof(PS2Request,commands) != offsetof(TPS2Request<>,commands))
+
+  /*if ((unsigned long)offsetof(struct PS2Request,commands) != (unsigned long)offsetof(struct PS2Request,commands))
   {
       IOLog("ApplePS2Controller::init: PS2Request.commands offset mismatch (%lu != %lu)\n",
-            offsetof(PS2Request,commands), offsetof(PS2Request,commands));
+            (unsigned long)offsetof(struct PS2Request,commands), (unsigned long)offsetof(struct PS2Request,commands));
       return false;
-  }
+  }*/
 
   // find config specific to Platform Profile
   OSDictionary* list = OSDynamicCast(OSDictionary, dict->getObject(kPlatformProfile));

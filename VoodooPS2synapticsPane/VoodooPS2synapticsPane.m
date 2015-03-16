@@ -110,14 +110,47 @@ int getBoolean (const char * key, io_service_t io_service)
 {
 }
 
+-(void)RunAlertPanel:(NSString *)Message title:(NSString *)Title buttonOne:(NSString *)firstButton buttonTwo:(NSString *)secondButton buttonThree:(NSString *)thirdButton
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+
+    if (Message != nil)
+    {
+        [alert setInformativeText:Message];
+    }
+
+    if (Title != nil)
+    {
+        [alert setMessageText:Title];
+    }
+    
+    if (firstButton != nil)
+    {
+        [alert addButtonWithTitle:firstButton];
+    }
+    
+    if (secondButton != nil)
+    {
+        [alert addButtonWithTitle:secondButton];
+    }
+    
+    if (thirdButton != nil)
+    {
+        [alert addButtonWithTitle:thirdButton];
+    }
+
+    [alert setAlertStyle:NSWarningAlertStyle];
+    [alert runModal];
+
+    [alert release];
+}
+
 - (void) awakeFromNib
 {
 	io_service = IOServiceGetMatchingService(0, IOServiceMatching("ApplePS2SynapticsTouchPad"));
 	if (!io_service)
 	{
-		NSRunCriticalAlertPanel( 
-								NSLocalizedString( @"ApplePS2SynapticsTouchPad not found", "MsgBox"), 
-								NSLocalizedString( @"Error", "MsgBoxTitle" ), nil, nil, nil );
+        [self RunAlertPanel:NSLocalizedString( @"ApplePS2SynapticsTouchPad not found", "MsgBox") title:NSLocalizedString( @"Error", "MsgBoxTitle" ) buttonOne:@"OK" buttonTwo:nil buttonThree:nil];
  		return;
 	}	
 	dict=CFDictionaryCreateMutable(NULL,0, &kCFTypeDictionaryKeyCallBacks ,NULL);	
@@ -178,23 +211,21 @@ int getBoolean (const char * key, io_service_t io_service)
 	
 	if (!dict)
 		return;
-	dat1=CFPropertyListCreateXMLData (kCFAllocatorDefault, dict);
+	dat1=CFPropertyListCreateData(kCFAllocatorDefault, dict, kCFPropertyListXMLFormat_v1_0, 0, NULL); //CFPropertyListCreateXMLData (kCFAllocatorDefault, dict);
 	if (!dat1)
 	{
-		NSRunCriticalAlertPanel( 
-								NSLocalizedString( @"Couldn't create XML", "MsgBox"),
-								NSLocalizedString( @"Error creating XML data", "MsgBoxBody" ), nil, nil, nil );		
-		return;
+        [self RunAlertPanel:NSLocalizedString( @"Couldn't create XML", "MsgBox") title:NSLocalizedString( @"Error creating XML data", "MsgBoxBody" ) buttonOne:@"OK" buttonTwo:nil buttonThree:nil];
+
+        return;
 	}
 	
 	dat2=(UInt8 *) malloc (CFDataGetLength (dat1));
 	CFDataGetBytes (dat1, CFRangeMake(0,CFDataGetLength(dat1)), dat2);
 	if (!dat2)
 	{
-		NSRunCriticalAlertPanel( 
-								NSLocalizedString( @"Couldn't alocate memory ", "MsgBox"), 
-								NSLocalizedString( @"Error allocating memory", "MsgBoxBody" ), nil, nil, nil );		
-		return;
+        [self RunAlertPanel:NSLocalizedString( @"Couldn't alocate memory ", "MsgBox") title:NSLocalizedString( @"Error allocating memory", "MsgBoxBody" ) buttonOne:@"OK" buttonTwo:nil buttonThree:nil];
+
+         return;
 	}
 	
     
@@ -206,9 +237,8 @@ int getBoolean (const char * key, io_service_t io_service)
 	
     if (!f)
 	{
-		NSRunCriticalAlertPanel( 
-								NSLocalizedString( @"Couldn't save plist", "MsgBox"), 
-								NSLocalizedString( @"Error opening file", "MsgBoxBody" ), nil, nil, nil );		
+        [self RunAlertPanel:NSLocalizedString( @"Couldn't save plist", "MsgBox") title:NSLocalizedString( @"Error opening file", "MsgBoxBody" ) buttonOne:@"OK" buttonTwo:nil buttonThree:nil];
+
 		return;
 	}
 	fwrite(dat2, 1, CFDataGetLength (dat1), f);
